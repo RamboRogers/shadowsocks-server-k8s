@@ -1,0 +1,84 @@
+# Source: shadowsocks-rust/templates/config.yaml
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: shadowsocks-rust
+  labels:
+    app.kubernetes.io/name: shadowsocks-rust
+    app.kubernetes.io/instance: shadowsocks-rust
+    app.kubernetes.io/version: "1.x.x"
+data:
+  config.json: |
+    {
+      "servers":
+        [
+          {
+            "fast_open": true,
+            "method": "aes-256-gcm",
+            "mode": "tcp_only",
+            "password": "SETYOURPASSWORD",
+            "server": "::",
+            "server_port": 443
+          }
+        ]
+    }
+---
+# Source: shadowsocks-rust/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shadowsocks-rust
+  labels:
+    app.kubernetes.io/name: shadowsocks-rust
+    app.kubernetes.io/instance: shadowsocks-rust
+    app.kubernetes.io/version: "1.x.x"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: shadowsocks-rust
+      app.kubernetes.io/instance: shadowsocks-rust
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: shadowsocks-rust
+        app.kubernetes.io/instance: shadowsocks-rust
+        lbtype: external
+    spec:
+      volumes:
+      - name: config
+        configMap:
+          name: shadowsocks-rust
+      - name: plugins
+        emptyDir: {}
+      containers:
+      - name: shadowsocks-rust
+        securityContext:
+          {}
+        image: "ghcr.io/shadowsocks/ssserver-rust:latest"
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+        - name: config
+          mountPath: /etc/shadowsocks-rust
+          readOnly: true
+        ports:
+        - name: ss-443
+          containerPort: 443
+          protocol: TCP
+        livenessProbe:
+          tcpSocket:
+            port: 443
+          failureThreshold: 3
+          initialDelaySeconds: 1
+          timeoutSeconds: 1
+        readinessProbe:
+          tcpSocket:
+            port: 443
+          initialDelaySeconds: 2
+        resources:
+          limits:
+            cpu: 100m
+            memory: 128Mi
+          requests:
+            cpu: 20m
+            memory: 32Mi
