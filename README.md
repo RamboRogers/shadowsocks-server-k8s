@@ -1,13 +1,13 @@
 # ShadowSocks K8s Server
 
-I wrote this example for my lab because the example using helm on the official site is complicated and didn't work for me.
+I wrote this example for my lab because the example using helm on the official site is complicated and didn't work for me.  This uses the [shadowsocks-rust](https://github.com/shadowsocks/shadowsocks-rust) prebuilt containers.
 
 ## Installation
 
-Copy the yaml file, edit the password and apply.  The existing lable for locallb is from the my usage of MetalLB.  You need to configure you own service exposure, the name is ss-443.
+Copy the yaml file, edit the password and apply.  The existing lable for locallb is from the my usage of MetalLB.  You need to configure you own service exposure, the port name is ss-443.
 
 ```
-wget
+wget https://raw.githubusercontent.com/RamboRogers/shadowsocks-server-k8s/master/shadowsocks-server.yaml
 kubectl apply -f shadowsocks-server.yaml
 ```
 
