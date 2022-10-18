@@ -15,7 +15,7 @@ kubectl apply -f shadowsocks-server.yaml
 
 
 * Add to your shadowsocks client with the password.  
-* This server also works without Outline VPN.
+* This server also works with [Outline VPN](https://getoutline.org).
 
 
 ## Contributing
